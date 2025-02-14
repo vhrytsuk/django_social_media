@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<div>
+    <h1>Search meeps!</h1>
+    <br/>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="input" class="form-control" name="search" placeholder="Search meeps">
+         <br/>
+         <br/>
+        <button type="submit" class="btn btn-primary">Search meep</button>
+    </form>
+</div>
+
+<br/><br/><br/>
+
+{% if search %}
+    <h3> Use serach for: {{search}} </h3>
+    </br></br>
+
+    {% if searched_meeps %}
+         {% for meep in searched_meeps %}
+            <div class="alert alert-dark" role="alert">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-2">
+                                 {% if meep.user.profile.profile_image %}
+                                    <img src="{{ meep.user.profile.profile_image.url }}" class="img-thumbnail rounded-circle" width=100 height=100 alt="Profile Image">
+                                {% else %}
+                                    <img src="{% static 'images/default-user.jpg' %}" class="img-thumbnail rounded-circle" width=100 height=100  alt="Profile">
+                                {% endif %}	
+                            </div>
+                            <div class="col-10">
+                                {% if meep.meep_image %}
+                                    <img src="{{ meep.meep_image.url }}" class="img-thumbnail" width=300 height=300 alt="Post image">
+                                {% endif %}
+                                <div>
+                                    {{ meep.body }}
+                                </div>
+                                <br/>
+                                <small class="text-muted">
+                                    {{ meep.created_at }} By: {{ meep.user.username }}
+                                    {{meep.number_of_likes}} Likes -
+                                    {% if user in meep.likes.all %}
+                                        <a href="{% url 'meep_like' meep.id %}">
+                                            <i class="fas fa-heart" style="color: red"></i>
+                                        </a>
+                                    {% else %}
+                                       <a href="{% url 'meep_like' meep.id %}">
+                                            <i class="fa fa-heart-o" style="color: red"></i>
+                                        </a>
+                                    {% endif %}
+                                    <a href="{% url 'meep_show' meep.id %}">
+                                         <i class="fas fa-share" style="color:gray"></i>
+                                    </a>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {% endfor %}
+    {% else %}
+        <h5 style="color: brown"> No meeps found </h5>
+    {% endif %}
+   
+{% endif %}   
+<br/>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<div>
+    <h1>Search users!</h1>
+    <br/>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="input" class="form-control" name="search" placeholder="Search meeps">
+         <br/>
+         <br/>
+        <button type="submit" class="btn btn-primary">Search meep</button>
+    </form>
+</div>
+
+<br/><br/><br/>
+
+{% if search %}
+    <h3> Use serach for: {{search}} </h3>
+    </br></br>
+
+    {% if searched_users %}
+       {% for result in searched_users %}
+			<div class="card mb-3" style="max-width: 540px;">
+				<div class="row g-0">
+					<div class="col-md-4 d-flex justify-content-center align-items-center">
+						{% if result.profile.profile_image %}
+                			<img src="{{ result.profile.profile_image.url }}" class="img-thumbnail rounded-circle" width=100 height=100 alt="Profile Image" style="height: 100px" >
+						{% else %}
+							<img src="{% static 'images/default-user.jpg' %}" class="img-thumbnail rounded-circle" width=100 height=100  alt="Profile">
+						{% endif %}	
+					</div>
+					<div class="col-md-8">
+					<div class="card-body">
+						<h5 class="card-title">{{ result.profile.user.username }}</h5>
+						<p class="card-text"><a href="{% url 'profile' result.profile.user.id %}">
+							@{{ result.profile.user.username|lower }}
+						</a></p>
+						<p class="card-text">
+							<small class="text-body-secondary">Last updated:</span> {{ result.profile.date_modified }}</small>
+						</p>
+					</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+
+    {% else %}
+        <h5 style="color: brown"> No user found </h5>
+    {% endif %}
+   
+{% endif %}   
+<br/>
+
+{% endblock %}
